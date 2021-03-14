@@ -38,23 +38,58 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/example',
+    path: '/coach',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/coach/table',
+    name: '教练管理',
+    meta: { title: '教练管理', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'list',
+        name: '教练列表',
+        component: () => import('@/views/gms/coach/list'),
+        meta: { title: '教练列表', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'save',
+        name: '添加教练',
+        component: () => import('@/views/gms/coach/save'),
+        meta: { title: '添加教练', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '编辑教练',
+        component: () => import('@/views/gms/coach/save'),
+        meta: { title: '编辑教练', noCache: true },
+        hidden: true
+      }
+    ]
+  },
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/table',
+    name: '课程管理',
+    meta: { title: '课程管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '课程列表',
+        component: () => import('@/views/gms/course/list'),
+        meta: { title: '课程列表', icon: 'table' }
+      },
+      {
+        path: 'import',
+        name: '导入课程',
+        component: () => import('@/views/gms/course/import'),
+        meta: { title: '导入课程', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '编辑课程',
+        component: () => import('@/views/gms/course/save'),
+        meta: { title: '编辑课程', noCache: true },
+        hidden: true
       }
     ]
   },
