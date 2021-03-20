@@ -66,15 +66,43 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/course',
+    path: '/user',
     component: Layout,
-    redirect: '/course/table',
-    name: '课程管理',
-    meta: { title: '课程管理', icon: 'example' },
+    redirect: '/user/table',
+    name: '用户管理',
+    meta: { title: '用户管理', icon: 'example' },
     children: [
       {
         path: 'list',
-        name: '课程列表',
+        name: '用户列表',
+        component: () => import('@/views/gms/user/list'),
+        meta: { title: '用户列表', icon: 'table' }
+      },
+      {
+        path: 'save',
+        name: '添加用户',
+        component: () => import('@/views/gms/user/save'),
+        meta: { title: '添加用户', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '编辑用户',
+        component: () => import('@/views/gms/user/save'),
+        meta: { title: '编辑用户', noCache: true },
+        hidden: true
+      }
+    ]
+  },
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/table',
+    name: '教学管理',
+    meta: { title: '教学管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '课程种类列表',
         component: () => import('@/views/gms/course/list'),
         meta: { title: '课程列表', icon: 'table' }
       },
@@ -93,7 +121,68 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/classroom',
+    component: Layout,
+    redirect: '/classroom/table',
+    name: '教室管理',
+    meta: { title: '教室管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '教室列表',
+        component: () => import('@/views/gms/classroom/list'),
+        meta: { title: '教室列表', icon: 'table' }
+      },
+      {
+        path: 'save',
+        name: '添加教室',
+        component: () => import('@/views/gms/classroom/save'),
+        meta: { title: '添加教室', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '编辑教室',
+        component: () => import('@/views/gms/classroom/save'),
+        meta: { title: '编辑教室', icon: 'tree' },
+        hidden: true
+      }
+    ]
+  },
+  {
+    path: '/equipment',
+    component: Layout,
+    redirect: '/equipment/table',
+    name: '器材管理',
+    meta: { title: '器材管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '器材列表',
+        component: () => import('@/views/gms/equipment/list'),
+        meta: { title: '器材列表', icon: 'table' }
+      },
+      {
+        path: 'recordlist',
+        name: '器材出入库记录',
+        component: () => import('@/views/gms/equipment/recordlist'),
+        meta: { title: '器材出入库记录', icon: 'table' }
+      },
+      {
+        path: 'import',
+        name: '导入器材',
+        component: () => import('@/views/gms/equipment/import'),
+        meta: { title: '导入器材', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '编辑器材',
+        component: () => import('@/views/gms/equipment/save'),
+        meta: { title: '编辑器材', noCache: true },
+        hidden: true
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,

@@ -3,26 +3,23 @@
     <!--查询表单-->
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="coachQuery.coachName" placeholder="教练名"/>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="coachQuery.level" clearable placeholder="教练头衔">
-          <el-option :value="0" label="普通教练"/>
-          <el-option :value="1" label="特约教练"/>
+        <el-select v-model="equipmentrecordQuery.equipmentId" placeholder="器材名称">
+          <el-option v-for="(item,index) in equipment" :key="index" :label="item.equipmentName" :value="item.equipmentId"/>
         </el-select>
-        <el-form-item>
-          <el-input v-model="coachQuery.coachRealName" placeholder="真实姓名"/>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="coachQuery.coachPhoneNumber" placeholder="电话"/>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="coachQuery.coachIdentityNumber" placeholder="身份证号码"/>
-        </el-form-item>
-        <!--
-         <el-form-item label="添加时间">
+      </el-form-item>
+      <el-select v-model="equipmentrecordQuery.recordType" clearable placeholder="操作类型">
+        <el-option :value="1" label="入库"/>
+        <el-option :value="2" label="出库"/>
+        <el-option :value="3" label="借用"/>
+      </el-select>
+      <el-select v-model="equipmentrecordQuery.operatorType" clearable placeholder="操作员">
+        <el-option :value="0" label="管理员"/>
+        <el-option :value="1" label="教练"/>
+        <el-option :value="2" label="用户"/>
+      </el-select>
+      <el-form-item>
         <el-date-picker
-          v-model="searchObj.begin"
+          v-model="equipmentrecordQuery.begin"
           type="datetime"
           placeholder="选择开始时间"
           value-format="yyyy-MM-dd HH:mm:ss"
@@ -31,14 +28,12 @@
       </el-form-item>
       <el-form-item>
         <el-date-picker
-          v-model="searchObj.end"
+          v-model="equipmentrecordQuery.end"
           type="datetime"
           placeholder="选择截止时间"
           value-format="yyyy-MM-dd HH:mm:ss"
           default-time="00:00:00"
         />
-      </el-form-item>
-        -->
       </el-form-item>
       <el-button type="primary" icon="el-icon-search" @click="getList()">查询</el-button>
       <el-button type="default" @click="resetData()">清空</el-button>
@@ -50,7 +45,6 @@
       border
       fit
       highlight-current--rows>
-
       <el-table-column
         label="序号"
         width="70"
@@ -59,36 +53,28 @@
           {{ (page-1) * limit + scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="avatar" label="头像" width="50">
-        <template slot-scope="scope">
-          <img :src="scope.row.avatar" width="20" height="20">
-        </template>
-      </el-table-column>
-      <el-table-column prop="coachName" label="名称" width="120" align="center"/>
-      <el-table-column
-        :filters="[{ text: '普通教练', value: 0 },{ text: '特约教练', value: 1 }]"
-        :filter-method="filterHandler"
-        property="level"
-        column-key="level"
-        label="头衔"
-        filter-placement="bottom-end"
-        align="center"
-        width="120">
+
+      <el-table-column prop="equipmentName" label="器材名称" sortable align="center"/>
+      <el-table-column label="操作员" sortable align="center">
         <template slot-scope="scope">
           <el-tag
-            :type= "scope.row.level===0 ? 'primary':'success'"
-            disable-transitions>{{ scope.row.level===0?'普通教练':'特约教练' }}</el-tag>
+            :type= "el_tag_type[scope.row.operator]"
+            disable-transitions>{{ scope.row.operatorName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="userRealName" label="真实姓名" width="120" align="center"/>
-      <el-table-column prop="userPhoneNumber" label="电话" width="200" align="center"/>
-      <el-table-column prop="userIdentityNumber" label="身份证号码" width="200" align="center"/>
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作类型" sortable align="center">
         <template slot-scope="scope">
-          <router-link :to="'/coach/edit/'+scope.row.coachId">
-            <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
-          </router-link>
-          <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.coachId)">删除</el-button>
+          <el-tag
+            :type= "el_tag_type[scope.row.recordType]"
+            disable-transitions>{{ recordType[scope.row.recordType-1] }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="equipmentNumber" label="数目" sortable align="center"/>
+      <el-table-column prop="modifiedtime" label="日期" sortable align="center"/>
+      <el-table-column label="操作" width="200" align="center">
+        <template slot-scope="scope">
+          <el-button v-if=" !scope.row.isReturn && scope.row.recordType === 3" type="warning" size="mini" icon="el-icon-warning" @click="returnEquipment(scope.row.equipmentRecordId)">归还</el-button>
+          <el-button v-else-if="scope.row.isReturn" type="success" size="mini" icon="el-icon-success" disabled>已归还</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -106,8 +92,8 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import coach from '@/api/coach'
+import equipmentrecord from '@/api/equipmentrecord'
+import equipment from '@/api/equipment'
 
 export default {
   data() { // 定义变量和初始值
@@ -116,38 +102,60 @@ export default {
       page: 1,
       limit: 10,
       total: 0,
-      coachQuery: {}
+      el_tag_type: ['success', 'info', 'warning', 'danger'],
+      recordType: ['入库', '出库', '借用'],
+      equipmentrecordQuery: {
+      },
+      equipment: {}
     }
   },
   created() { // 页面渲染之前执行，调用methods定义的方法
     this.getList()
+    this.getEquipment()
   },
   methods: { // 创建具体的方法，调用coach.js定义的方法
     getList(page = 1) {
       this.page = page
-      coach.getCoachListPage(this.page, this.limit, this.coachQuery)
+      equipmentrecord.getEquipmentrecordListPage(this.page, this.limit, this.equipmentrecordQuery)
         .then(response => { // 请求成功
           // response接口返回的数据
           this.list = response.data.item
           this.total = response.data.total
-          console.log(this.list)
-          console.log(this.total)
+        })
+        .catch(error => {
+          console.log((error))
+        })// 请求失败
+    },
+    getEquipment() {
+      equipment.getAllEquipment()
+        .then(response => { // 请求成功
+          // response接口返回的数据
+          this.equipment = response.data.item
+        })
+        .catch(error => {
+          console.log((error))
+        })// 请求失败
+    },
+    returnEquipment(id) {
+      equipmentrecord.returnEquipment(id)
+        .then(response => { // 请求成功
+          this.getList()
         })
         .catch(error => {
           console.log((error))
         })// 请求失败
     },
     resetData() {
-      this.coachQuery = {}
+      this.equipmentrecordQuery = {}
       this.getList()
     },
     removeDataById(id) {
-      this.$confirm('此操作将永久删除该教练, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该器材, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        coach.removeDataById(id)
+        equipmentrecord.removeDataById(id)
           .then(response => { // 请求成功
             this.$message({
               type: 'success',
