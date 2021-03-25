@@ -13,6 +13,12 @@ export default{
       data: coachQuery
     })
   },
+  getAllCoach() {
+    return request({
+      url: `/gmsservice/coach/findAll`,
+      method: 'get'
+    })
+  },
   getCoach(id) {
     return request({
       url: `/gmsservice/coach/get/${id}`,

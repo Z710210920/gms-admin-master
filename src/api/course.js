@@ -10,6 +10,12 @@ export default{
       data: courseQuery
     })
   },
+  getAllCourse() {
+    return request({
+      url: `/gmsservice/course/findAll`,
+      method: 'get'
+    })
+  },
   getCourse(id) {
     return request({
       url: `/gmsservice/course/get/${id}`,

@@ -102,21 +102,64 @@ export const constantRouterMap = [
     children: [
       {
         path: 'list',
-        name: '课程种类列表',
+        name: '科目种类列表',
         component: () => import('@/views/gms/course/list'),
-        meta: { title: '课程列表', icon: 'table' }
+        meta: { title: '科目列表', icon: 'table' }
       },
       {
         path: 'import',
-        name: '导入课程',
+        name: '导入科目',
         component: () => import('@/views/gms/course/import'),
-        meta: { title: '导入课程', icon: 'tree' }
+        meta: { title: '导入科目', icon: 'tree' }
       },
       {
         path: 'edit/:id',
-        name: '编辑课程',
+        name: '编辑科目',
         component: () => import('@/views/gms/course/save'),
-        meta: { title: '编辑课程', noCache: true },
+        meta: { title: '编辑科目', noCache: true },
+        hidden: true
+      }
+    ]
+  },
+  // 课程管理
+  {
+    path: '/class',
+    component: Layout,
+    redirect: '/class/list',
+    name: '课程管理',
+    meta: { title: '课程管理', icon: 'form' },
+    children: [
+      {
+        path: 'list',
+        name: 'ClassList',
+        component: () => import('@/views/gms/class/list'),
+        meta: { title: '课程列表' }
+      },
+      {
+        path: 'info',
+        name: 'ClassInfo',
+        component: () => import('@/views/gms/class/info'),
+        meta: { title: '发布课程' }
+      },
+      {
+        path: 'info/:id',
+        name: 'ClassInfoEdit',
+        component: () => import('@/views/gms/class/info'),
+        meta: { title: '编辑课程基本信息', noCache: true },
+        hidden: true
+      },
+      {
+        path: 'chapter/:id',
+        name: 'ClassChapterEdit',
+        component: () => import('@/views/gms/class/chapter'),
+        meta: { title: '编辑课程大纲', noCache: true },
+        hidden: true
+      },
+      {
+        path: 'publish/:id',
+        name: 'ClassPublishEdit',
+        component: () => import('@/views/gms/class/publish'),
+        meta: { title: '发布课程', noCache: true },
         hidden: true
       }
     ]
