@@ -80,9 +80,9 @@
             disable-transitions>{{ scope.row.level===0?'普通教练':'特约教练' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="userRealName" label="真实姓名" width="120" align="center"/>
-      <el-table-column prop="userPhoneNumber" label="电话" width="200" align="center"/>
-      <el-table-column prop="userIdentityNumber" label="身份证号码" width="200" align="center"/>
+      <el-table-column prop="coachRealName" label="真实姓名" width="120" align="center"/>
+      <el-table-column prop="coachPhoneNumber" label="电话" width="200" align="center"/>
+      <el-table-column prop="coachIdentityNumber" label="身份证号码" width="200" align="center"/>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <router-link :to="'/coach/edit/'+scope.row.coachId">

@@ -8,5 +8,45 @@ export default{
       method: 'post',
       data: classInfo
     })
+  },
+  getClassInfoById(id) {
+    return request({
+      url: `${api_name}/getClassInfo/${id}`,
+      method: 'get'
+    })
+  },
+  updateClassInfoById(id, classinfo) {
+    return request({
+      url: `${api_name}/updateClassInfo/${id}`,
+      method: 'put',
+      data: classinfo
+    })
+  },
+
+  getClassPublishInfoById(id) {
+    return request({
+      url: `${api_name}/classPublishInfo/${id}`,
+      method: 'get'
+    })
+  },
+
+  publishClass(id) {
+    return request({
+      url: `${api_name}/publishClass/${id}`,
+      method: 'put'
+    })
+  },
+  getPageList(page, limit, ClassInfo) {
+    return request({
+      url: `${api_name}/${page}/${limit}`,
+      method: 'get',
+      params: ClassInfo
+    })
+  },
+  removeById(id) {
+    return request({
+      url: `${api_name}/delete/${id}`,
+      method: 'delete'
+    })
   }
 }

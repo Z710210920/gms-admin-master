@@ -12,6 +12,12 @@ export default{
       data: classroomQuery
     })
   },
+  getAllClassRoom() {
+    return request({
+      url: `/gmsservice/classroom/findAll`,
+      method: 'get'
+    })
+  },
   getClassroom(id) {
     return request({
       url: `/gmsservice/classroom/get/${id}`,
