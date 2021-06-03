@@ -1,9 +1,5 @@
 <template>
-  <div v-if="roles === '[admin]'" class="dashboard-container">
-    <el-calendar v-model="value">
-    </el-calendar>
-  </div>
-  <div v-else-if="roles === '[user]'" class="app-container">
+  <div class="app-container">
     <!--月卡-->
     <el-dialog :visible.sync="dialogChapterFormVisible" title="选择月卡类型" style="text-align:center">
       <el-form>账户余额： {{ user.balance }}</el-form>
@@ -54,8 +50,8 @@
         </el-button>
       </el-form-item>
       <!--<el-form-item label="讲师排序">
-          <el-input-number v-model="user.sort" controls-position="right" min="0"/>
-        </el-form-item>-->
+        <el-input-number v-model="user.sort" controls-position="right" min="0"/>
+      </el-form-item>-->
       <el-form-item label="用户等级">
         <el-select v-model="user.level" clearable placeholder="请选择" disabled="true">
           <el-option :value="0" label="会员用户"/>
@@ -83,11 +79,11 @@
         <el-button :disabled="edit" type="primary" icon="el-icon-upload" @click="imagecropperShow=true">更换头像
         </el-button>
         <!--
-      v-show：是否显示上传组件
-      :key：类似于id，如果一个页面多个图片上传控件，可以做区分
-      :url：后台上传的url地址
-      @close：关闭上传组件
-      @crop-upload-success：上传成功后的回调 -->
+    v-show：是否显示上传组件
+    :key：类似于id，如果一个页面多个图片上传控件，可以做区分
+    :url：后台上传的url地址
+    @close：关闭上传组件
+    @crop-upload-success：上传成功后的回调 -->
         <image-cropper
           v-show="imagecropperShow"
           :width="300"
@@ -104,92 +100,27 @@
       </el-form-item>
     </el-form>
   </div>
-  <div v-else-if="roles === '[coach]'" class="app-container">
-    <el-form label-width="120px">
-      <el-form-item lable="模式">
-        <el-switch
-          v-model="edit"
-          active-text="查看"
-          inactive-text="修改"/>
-      </el-form-item>
-      <el-form-item label="教练名">
-        <el-input v-model="coach.coachName" :readonly="edit"/>
-      </el-form-item>
-      <el-form-item label="真实姓名">
-        <el-input v-model="coach.coachRealName" :readonly="edit"/>
-      </el-form-item>
-      <el-form-item label="联系方式">
-        <el-input v-model="coach.coachPhoneNumber" :readonly="edit"/>
-      </el-form-item>
-      <el-form-item label="身份证号码">
-        <el-input v-model="coach.coachIdentityNumber" :readonly="edit"/>
-      </el-form-item>
-      <el-form-item :hidden="edit" label="密码">
-        <el-input v-model="coach.coachPassword" type="password"/>
-      </el-form-item>
-      <el-form-item label="教练简介">
-        <el-input v-model="coach.intro" :rows="10" :readonly="edit" type="textarea"/>
-      </el-form-item>
-      <!-- 讲师头像 -->
-      <el-form-item label="教练头像">
-        <!-- 头衔缩略图 -->
-        <pan-thumb :image="coach.avatar"/>
-        <!-- 文件上传按钮 -->
-        <el-button :disabled="edit" type="primary" icon="el-icon-upload" @click="imagecropperShow=true">更换头像
-        </el-button>
-        <!--
-      v-show：是否显示上传组件
-      :key：类似于id，如果一个页面多个图片上传控件，可以做区分
-      :url：后台上传的url地址
-      @close：关闭上传组件
-      @crop-upload-success：上传成功后的回调 -->
-        <image-cropper
-          v-show="imagecropperShow"
-          :width="300"
-          :height="300"
-          :key="imagecropperKey"
-          :url="BASE_API+'/gmsoss/fileoss/coach'"
-          field="file"
-          @close="close"
-          @crop-upload-success="cropSuccess"/>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button :disabled="edit" type="primary" @click="saveOrUpdate">保存</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import user from '@/api/user'
-import coach from '@/api/coach'
 import ImageCropper from '@/components/ImageCropper'
 import PanThumb from '@/components/PanThumb'
+import { mapGetters } from 'vuex'
 import store from '../../store'
 import membershipcard from '../../api/membershipcard'
 
-export default {
-  name: 'Dashboard',
+export default{
   components: { ImageCropper, PanThumb },
   computed: {
     ...mapGetters([
-      'name',
-      'roles',
       'Id'
     ])
   },
   // eslint-disable-next-line vue/order-in-components
   data() {
     return {
-      date: '',
-      time: '',
-      week: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-      value: new Date(),
       user: {
-      },
-      coach: {
       },
       edit: true,
       saveBtnDisabled: false, // 保存按钮是否禁用,
@@ -208,38 +139,10 @@ export default {
       price: [150, 440, 880, 1770]
     }
   },
-  mounted: function() { // 定时执行更新时间的方法
-    const _this = this
-    _this.$nextTick(function() {
-      setInterval(_this.updateTime, 1000)
-    })
-  },
   created() {
     this.init()
   },
-
   methods: {
-    // 更新时间的方法
-    updateTime() {
-      const _this = this
-      const cd = new Date()
-      // this.date;
-      _this.time = _this.zeroPadding(cd.getHours(), 2) + ':' +
-          _this.zeroPadding(cd.getMinutes(), 2) + ':' +
-          _this.zeroPadding(cd.getSeconds(), 2)
-      _this.date = _this.zeroPadding(cd.getFullYear(), 4) + '-' +
-          _this.zeroPadding(cd.getMonth() + 1, 2) + '-' +
-          _this.zeroPadding(cd.getDate(), 2) + ' ' +
-          _this.week[cd.getDay()]
-    },
-    // 更新时间的辅助方法
-    zeroPadding(num, digit) {
-      let zero = ''
-      for (let i = 0; i < digit; i++) {
-        zero += '0'
-      }
-      return (zero + num).slice(-digit)
-    },
     close() {
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
@@ -262,7 +165,7 @@ export default {
           this.hidden()
           this.init()
         })
-      // eslint-disable-next-line handle-callback-err
+        // eslint-disable-next-line handle-callback-err
         .catch(error => {
           this.$message({
             type: 'error',
@@ -286,24 +189,10 @@ export default {
       this.imagecropperKey = this.imagecropperKey + 1
     },
     init() {
-      if (this.roles === '[user]') {
-        this.userInit()
-      } else {
-        this.coachInit()
-      }
-    },
-    userInit() {
       user.getUser(this.Id)
         .then(response => {
           this.user = response.data.item
           this.user.userPassword = ''
-        })
-    },
-    coachInit() {
-      coach.getCoach(this.Id)
-        .then(response => {
-          this.coach = response.data.item
-          this.coach.coachPassword = ''
         })
     },
     saveOrUpdate() {
@@ -322,7 +211,7 @@ export default {
             this.init()
           }
         })
-      // eslint-disable-next-line handle-callback-err
+        // eslint-disable-next-line handle-callback-err
         .catch(error => {
           this.$message({
             type: 'error',
@@ -334,17 +223,6 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
-}
-.is-selected {
-  color: #1989FA;
-}
+<style scoped>
+
 </style>

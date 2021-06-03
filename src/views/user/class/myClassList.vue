@@ -62,7 +62,7 @@
               <img :src="scope.row.cover" alt="scope.row.title" width="150px">
             </div>
             <div class="title">
-              <router-link :to="'/class/selectClassAndSignIn/' + scope.row.classId">{{ scope.row.title }}</router-link>
+              <router-link :to="'/class/info/' + scope.row.classId">{{ scope.row.title }}</router-link>
               <p>{{ scope.row.classTimes }}课时</p>
             </div>
           </div>
@@ -86,21 +86,9 @@
           '¥' + scope.row.classPrice.toFixed(2) }}
         </template>
       </el-table-column>
-      <el-table-column prop="buyCount" label="付费学员" width="100" align="center" >
+      <el-table-column label="操作">
         <template slot-scope="scope">
-          {{ scope.row.buyCount }}人
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" width="150" align="center">
-        <template slot-scope="scope">
-          <router-link :to="'/class/info/' + scope.row.classId">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑课程信息</el-button>
-          </router-link>
-          <router-link :to="'/class/chapter/'+scope.row.classId">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑课程大纲</el-button>
-          </router-link>
-          <el-button type="text" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.classId)">删除</el-button>
+          <el-button @click="usersignin(scope.row)">签到</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -121,8 +109,16 @@
 import course from '@/api/course'
 import classInfo from '@/api/classInfo'
 import coach from '@/api/coach'
+import signin from '@/api/signin'
+import { mapGetters } from 'vuex'
 
 export default {
+  computed: {
+    ...mapGetters([
+      'Id'
+    ])
+  },
+  // eslint-disable-next-line vue/order-in-components
   data() { // 定义变量和初始值
     return {
       listLoading: true, // 是否显示loading信息
@@ -133,8 +129,13 @@ export default {
       ClassInfo: {
         courseId: '',
         title: '',
-        coachId: ''
+        coachId: '',
+        userId: ''
       }, // 查询条件
+      signin: {
+        classselection: '',
+        currentTimes: 0
+      },
       coachList: [],
       courseList: []
     }
@@ -144,9 +145,10 @@ export default {
   },
   methods: { // 创建具体的方法，调用coach.js定义的方法
     fetchData(page = 1) {
+      this.ClassInfo.userId = this.Id
       this.page = page
       this.listLoading = true
-      classInfo.getPageList(this.page, this.limit, this.ClassInfo)
+      classInfo.getPageSelectedList(this.page, this.limit, this.ClassInfo)
         .then(response => { // 请求成功
           // response接口返回的数据
           if (response.success === true) {
@@ -164,6 +166,19 @@ export default {
       coach.getAllCoach().then(response => {
         this.coachList = response.data.item
       })
+    },
+    usersignin(row) {
+      this.signin.classselection = row.classId
+      this.signin.currentTimes = row.currentTimes
+      signin.signin(this.signin).then(response => { // 请求成功
+        this.$message({
+          type: 'success',
+          message: '签到成功!'
+        })
+      })
+        .catch(error => {
+          console.log((error))
+        })// 请求失败
     },
 
     initCourseList() {
@@ -193,7 +208,7 @@ export default {
             console.log((error))
           })// 请求失败
       })
-    }
+    },
   }
 }
 </script>

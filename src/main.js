@@ -14,6 +14,11 @@ import store from './store'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import moment from 'moment'
+
+Vue.filter('dateformat', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
+  return moment(dataStr).format(pattern)
+})
 
 Vue.use(ElementUI, { locale })
 

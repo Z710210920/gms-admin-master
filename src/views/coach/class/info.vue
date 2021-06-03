@@ -5,7 +5,8 @@
     <h2 style="text-align: center;">发布新课程</h2>
 
     <el-steps :active="1" process-status="wait" align-center style="margin-bottom: 40px;">
-      <el-step title="填写课程基本信息"/>
+      <el-step title="填写课程基本信息"/><!--
+      <el-step title="创建课程大纲"/>-->
       <el-step title="提交审核"/>
     </el-steps>
 
@@ -24,18 +25,6 @@
             :key="course.courseId"
             :label="course.name"
             :value="course.courseId"/>
-        </el-select>
-      </el-form-item>
-      <!-- 课程讲师 TODO -->
-      <el-form-item label="课程讲师">
-        <el-select
-          v-model="classInfo.coachId"
-          placeholder="请选择">
-          <el-option
-            v-for="coach in coachList"
-            :key="coach.coachId"
-            :label="coach.coachName"
-            :value="coach.coachId"/>
         </el-select>
       </el-form-item>
       <el-form-item label="课程教室">
@@ -85,6 +74,7 @@ import course from '@/api/course'
 import coach from '@/api/coach'
 import classroom from '@/api/classroom'
 import Tinymce from '@/components/Tinymce'
+import { mapGetters } from 'vuex'
 
 const defaultForm = {
   'classBeginTime': '',
@@ -101,6 +91,12 @@ const defaultForm = {
 
 export default {
   components: { Tinymce },
+  computed: {
+    ...mapGetters([
+      'Id'
+    ])
+  },
+  // eslint-disable-next-line vue/order-in-components
   data() {
     return {
       id: '',
@@ -124,6 +120,7 @@ export default {
   },
   methods: {
     init() {
+      this.classInfo.classCoachId = this.Id
       if (this.$route.params && this.$route.params.id) {
         this.id = this.$route.params.id
         this.fetchClassInfoById(this.id)
@@ -131,7 +128,6 @@ export default {
         this.classInfo = { ...defaultForm }
       }
       this.getAllCourse()
-      this.getAllCoach()
       this.getAllClassRoom()
     },
     fetchClassInfoById(id) {
@@ -195,6 +191,7 @@ export default {
         return response// 将响应结果传递给then
       }).then(response => {
         this.$router.push({ path: '/class/publish/' + response.data.classId })
+        /* this.$router.push({ path: '/class/chapter/' + response.data.classId })*/
       }).catch((response) => {
         this.$message({
           type: 'error',

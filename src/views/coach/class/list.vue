@@ -20,16 +20,11 @@
       <el-form-item>
         <el-input v-model="ClassInfo.title" placeholder="课程标题"/>
       </el-form-item>
-      <!-- 讲师 -->
+      <!-- 状态 -->
       <el-form-item>
-        <el-select
-          v-model="ClassInfo.coachId"
-          placeholder="请选择讲师">
-          <el-option
-            v-for="coach in coachList"
-            :key="coach.coachId"
-            :label="coach.coachName"
-            :value="coach.coachId"/>
+        <el-select v-model="ClassInfo.status" clearable placeholder="课程状态">
+          <el-option value="Draft" label="未发布"/>
+          <el-option value="Normal" label="已发布"/>
         </el-select>
       </el-form-item>
 
@@ -77,7 +72,7 @@
       </el-table-column>
       <el-table-column label="发布时间" align="center">
         <template slot-scope="scope">
-          {{ scope.row.modifiedtime.substr(0, 10) }}
+          {{ scope.row.status === 'Draft' ? '未发布' : scope.row.modifiedtime.substr(0, 10) }}
         </template>
       </el-table-column>
       <el-table-column label="价格" width="100" align="center" >
@@ -96,9 +91,6 @@
         <template slot-scope="scope">
           <router-link :to="'/class/info/' + scope.row.classId">
             <el-button type="text" size="mini" icon="el-icon-edit">编辑课程信息</el-button>
-          </router-link>
-          <router-link :to="'/class/chapter/'+scope.row.classId">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑课程大纲</el-button>
           </router-link>
           <el-button type="text" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.classId)">删除</el-button>
         </template>
@@ -120,9 +112,15 @@
 <script>
 import course from '@/api/course'
 import classInfo from '@/api/classInfo'
-import coach from '@/api/coach'
+import { mapGetters } from 'vuex'
 
 export default {
+  computed: {
+    ...mapGetters([
+      'Id'
+    ])
+  },
+  // eslint-disable-next-line vue/order-in-components
   data() { // 定义变量和初始值
     return {
       listLoading: true, // 是否显示loading信息
@@ -133,9 +131,9 @@ export default {
       ClassInfo: {
         courseId: '',
         title: '',
-        coachId: ''
-      }, // 查询条件
-      coachList: [],
+        coachId: '',
+        status: ''
+      },
       courseList: []
     }
   },
@@ -145,7 +143,9 @@ export default {
   methods: { // 创建具体的方法，调用coach.js定义的方法
     fetchData(page = 1) {
       this.page = page
+      this.ClassInfo.coachId = this.Id
       this.listLoading = true
+      this.initCourseList()
       classInfo.getPageList(this.page, this.limit, this.ClassInfo)
         .then(response => { // 请求成功
           // response接口返回的数据
@@ -160,11 +160,6 @@ export default {
           console.log((error))
         })// 请求失败
     },
-    initCoachList() {
-      coach.getAllCoach().then(response => {
-        this.coachList = response.data.item
-      })
-    },
 
     initCourseList() {
       course.getAllCourse().then(response => {
@@ -172,7 +167,12 @@ export default {
       })
     },
     resetData() {
-      this.ClassInfo = {}
+      this.ClassInfo = {
+        courseId: '',
+        title: '',
+        coachId: this.Id,
+        status: 'Normal'
+      }
       this.fetchData()
     },
     removeDataById(id) {

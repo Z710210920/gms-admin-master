@@ -5,17 +5,26 @@ export default{
 // current当前页 limit每页记录数 userQuery条件对象
   getUserListPage(current, limit, userQuery) {
     return request({
-      // url:`/gmsservice/user/pageUserCondition/${current}/${limit}`,
       url: `/gmsservice/user/pageUserCondition/${current}/${limit}`,
       method: 'post',
-      // userQuery条件对象，后端使用RequestBody获取数据
-      // data表示把对象转换json进行传递到接口里面
       data: userQuery
     })
   },
   getUser(id) {
     return request({
       url: `/gmsservice/user/get/${id}`,
+      method: 'get'
+    })
+  },
+  getByPhoneNumber(PhoneNumber) {
+    return request({
+      url: `/gmsservice/user/getByPhoneNumber/${PhoneNumber}`,
+      method: 'get'
+    })
+  },
+  getAllUser() {
+    return request({
+      url: `/gmsservice/user/findAll`,
       method: 'get'
     })
   },

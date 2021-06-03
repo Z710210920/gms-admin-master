@@ -62,7 +62,7 @@
               <img :src="scope.row.cover" alt="scope.row.title" width="150px">
             </div>
             <div class="title">
-              <router-link :to="'/class/selectClassAndSignIn/' + scope.row.classId">{{ scope.row.title }}</router-link>
+              <router-link :to="'/class/info/' + scope.row.classId">{{ scope.row.title }}</router-link>
               <p>{{ scope.row.classTimes }}课时</p>
             </div>
           </div>
@@ -86,21 +86,9 @@
           '¥' + scope.row.classPrice.toFixed(2) }}
         </template>
       </el-table-column>
-      <el-table-column prop="buyCount" label="付费学员" width="100" align="center" >
+      <el-table-column prop="buyCount" label="学员" width="100" align="center" >
         <template slot-scope="scope">
           {{ scope.row.buyCount }}人
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作" width="150" align="center">
-        <template slot-scope="scope">
-          <router-link :to="'/class/info/' + scope.row.classId">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑课程信息</el-button>
-          </router-link>
-          <router-link :to="'/class/chapter/'+scope.row.classId">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑课程大纲</el-button>
-          </router-link>
-          <el-button type="text" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.classId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -133,7 +121,8 @@ export default {
       ClassInfo: {
         courseId: '',
         title: '',
-        coachId: ''
+        coachId: '',
+        status: 'Normal'
       }, // 查询条件
       coachList: [],
       courseList: []
@@ -172,7 +161,12 @@ export default {
       })
     },
     resetData() {
-      this.ClassInfo = {}
+      this.ClassInfo = {
+        courseId: '',
+        title: '',
+        coachId: '',
+        status: 'Normal'
+      }
       this.fetchData()
     },
     removeDataById(id) {
@@ -193,7 +187,7 @@ export default {
             console.log((error))
           })// 请求失败
       })
-    }
+    },
   }
 }
 </script>

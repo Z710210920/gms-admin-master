@@ -6,6 +6,7 @@
 
     <el-steps :active="3" process-status="wait" align-center style="margin-bottom: 40px;">
       <el-step title="填写课程基本信息"/>
+      <el-step title="创建课程大纲"/>
       <el-step title="发布课程"/>
     </el-steps>
 
@@ -22,7 +23,7 @@
 
     <div>
       <el-button @click="previous">返回修改</el-button>
-      <el-button :disabled="saveBtnDisabled" type="primary" @click="publish">发布课程</el-button>
+      <el-button disabled="true" type="primary" @click="publish">等待管理员发布课程</el-button>
     </div>
   </div>
 </template>
@@ -47,7 +48,7 @@ export default {
   methods: {
     previous() {
       console.log('previous')
-      this.$router.push({ path: '/class/info/' + this.classId })
+      this.$router.push({ path: '/class/chapter/' + this.classId })
     },
 
     publish() {

@@ -14,10 +14,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="联系方式">
-        <el-input v-model="coach.coachPhoneNumber"/>
+        <el-input v-model="coach.coachPhoneNumber" maxlength="11" show-word-limit/>
       </el-form-item>
       <el-form-item label="身份证号码">
-        <el-input v-model="coach.coachIdentityNumber"/>
+        <el-input v-model="coach.coachIdentityNumber" maxlength="18" show-word-limit/>
       </el-form-item>
       <el-form-item label="密码">
         <el-input v-model="coach.coachPassword" type="password"/>

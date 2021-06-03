@@ -23,6 +23,26 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
+      <el-form-item prop="code">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          v-model="loginForm.code"
+          style="width: 70% !important;"
+          name="code"
+          placeholder="验证码"/>
+        <span class="valicImg">
+          <img :src="valica" @click="getValicateCode()">
+        </span>
+      </el-form-item>
+      <div style="text-align: center">
+        <el-radio-group v-model="loginForm.roles">
+          <el-radio :label="0">办公登录</el-radio>
+          <el-radio :label="1">会员登录</el-radio>
+        </el-radio-group>
+      </div>
+      <br>
       <el-form-item>
         <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           登 录
@@ -37,7 +57,7 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
+import valicateCode from '@/api/valicate'
 
 export default {
   name: 'Login',
@@ -60,8 +80,12 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        uuid: '',
+        code: '',
+        roles: 0
       },
+      valica: '',
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }]
@@ -79,7 +103,26 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.init()
+  },
   methods: {
+    init() {
+      this.getValicateCode()
+    },
+    getValicateCode() {
+      valicateCode.getVerifyCode().then(response => { // 请求成功
+        // response接口返回的数据
+        this.valica = 'data:image/jpeg;base64,' + response.data.varifyCode
+        this.loginForm.uuid = response.data.uuid
+      })
+        .catch(error => {
+          this.$message({
+            type: 'error',
+            message: '获取验证码失败,请刷新网页!'
+          })
+        })// 请求失败
+    },
     showPwd() {
       if (this.pwdType === 'password') {
         this.pwdType = ''
@@ -177,6 +220,12 @@ $light_gray:#eee;
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+  }
+  .valicImg {
+    padding-top: 15px;
     vertical-align: middle;
     width: 30px;
     display: inline-block;

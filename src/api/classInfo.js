@@ -43,10 +43,23 @@ export default{
       params: ClassInfo
     })
   },
+  getPageSelectedList(page, limit, ClassInfo) {
+    return request({
+      url: `${api_name}/Selected/${page}/${limit}`,
+      method: 'get',
+      params: ClassInfo
+    })
+  },
   removeById(id) {
     return request({
       url: `${api_name}/delete/${id}`,
       method: 'delete'
+    })
+  },
+  nextPeriod(classId) {
+    return request({
+      url: `${api_name}/nextPeriod/${classId}`,
+      method: 'post'
     })
   }
 }

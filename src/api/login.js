@@ -1,12 +1,15 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
+export function login(username, password, code, uuid, roles) {
   return request({
-    url: '/gmsservice/user/login',
+    url: '/gmsservice/user/admin/login',
     method: 'post',
     data: {
       username,
-      password
+      password,
+      code,
+      uuid,
+      roles
     }
   })
 }

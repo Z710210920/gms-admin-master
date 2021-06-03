@@ -71,12 +71,12 @@
       </el-table-column>
       <el-table-column prop="equipmentNumber" label="数目" sortable align="center"/>
       <el-table-column prop="modifiedtime" label="日期" sortable align="center"/>
-      <el-table-column label="操作" width="200" align="center">
+      <!--<el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button v-if=" !scope.row.isReturn && scope.row.recordType === 3" type="warning" size="mini" icon="el-icon-warning" @click="returnEquipment(scope.row.equipmentRecordId)">归还</el-button>
           <el-button v-else-if="scope.row.isReturn" type="success" size="mini" icon="el-icon-success" disabled>已归还</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
 
     <!-- 分页 -->
