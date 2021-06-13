@@ -12,7 +12,7 @@
           <el-input v-model="topUpMessage.number"/>
         </el-form-item >
         用户名： {{ user.username }}<br><br>
-        请支付课程费用 ￥{{ new Date() > Date.parse(user.deadline) ? classInfo.classPrice : '免费' }}<br><br>
+        请支付课程费用 ￥{{ classInfo.classPrice }}<br><br>
         用户类型： {{ new Date() > Date.parse(user.deadline) ? '普通用户' : '会员' }}<br><br>
         账户余额： {{ user.balance + (new Date() > Date.parse(user.deadline) ? (classInfo.classPrice > user.balance ? '（余额不足请充值）' : '') : '') }}
       </el-form>
@@ -172,7 +172,7 @@ export default {
         this.Sign_up_button = true
         this.classselection.user = this.user.userId
         this.topUpMessage.userId = this.user.userId
-        this.able = (new Date() > Date.parse(this.user.deadline) && this.classInfo.classPrice > this.user.balance)
+        this.able = this.classInfo.classPrice > this.user.balance
       })
     },
     saveOrUpdate() {

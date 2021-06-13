@@ -21,9 +21,10 @@
           :action="BASE_API+'/gmsservice/course/addByExcel'"
           name="file"
           accept="application/vnd.ms-excel">
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          <el-button slot="trigger" size="small" type="primary" @click="abled()">选取文件</el-button>
           <el-button
             :loading="loading"
+            :disabled="able"
             style="margin-left: 10px;"
             size="small"
             type="success"
@@ -114,6 +115,7 @@ export default {
       OSS_PATH: process.env.OSS_PATH, // 阿里云OSS地址
       importBtnDisabled: false, // 按钮是否禁用,
       loading: false,
+      able: true,
       target: ['热身', '拉伸放松', '柔韧性', '减脂', '塑形', '增肌'],
       part: ['全身', '腹部', '腿部', '腰部', '背部', '胸部', '手臂', '肩部', '臀部', '颈部', '脸部'],
       difficulty: ['零基础', '初学', '进阶', '强化', '挑战'],
@@ -150,7 +152,9 @@ export default {
       this.loading = true
       this.$refs.upload.submit()
     },
-
+    abled() {
+      this.able = false
+    },
     fileUploadSuccess(response) {
       if (response.success === true) {
         this.list = response.data.item

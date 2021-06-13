@@ -265,6 +265,21 @@ export const adminRouterMap = [
         meta: { title: '所有账单' }
       }
     ]
+  },
+  {
+    path: '/fitness',
+    component: Layout,
+    redirect: '/fitness/list',
+    name: '自由健身',
+    meta: { title: '自由健身', icon: 'form' },
+    children: [
+      {
+        path: 'list',
+        name: '自由健身',
+        component: () => import('@/views/gms/fitness/freeFitness'),
+        meta: { title: '自由健身' }
+      }
+    ]
   }
 ]
 export const coachRouterMap = [

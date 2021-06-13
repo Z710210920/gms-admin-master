@@ -47,6 +47,9 @@
             <div v-if="scope.row.reserveState === 0">
               <el-button type="danger" size="mini" icon="el-icon-delete">已拒绝</el-button>
             </div>
+            <div v-else-if="new Date(scope.row.reserveTime).getTime() < new Date().getTime() && scope.row.reserveState != 4 && scope.row.reserveState != 5 && scope.row.reserveState != 0">
+              已过期
+            </div>
             <div v-else-if="scope.row.reserveState === 1">
               <el-button :type= "el_tag_type[scope.row.reserveState]" size="mini">{{ reserve_state[scope.row.reserveState] }}</el-button>
               <el-button type="danger" size="mini" icon="el-icon-delete" @click="cancel(scope.row.reserveId)">取消</el-button>
@@ -93,7 +96,7 @@ export default {
         userId: ''
       },
       el_tag_type: ['warning', 'success', 'success', 'success', 'success', 'primary'],
-      reserve_state: ['已拒绝', '待确认', '待授课', '上课中', '待评价', '已评价']
+      reserve_state: ['已拒绝', '待确认', '待授课', '上课中', '已完成', '已完成']
     }
   },
   created() { // 页面渲染之前执行，调用methods定义的方法

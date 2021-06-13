@@ -46,14 +46,17 @@
       <el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <div v-if="scope.row.reserveState === 0">
+            <div v-if="new Date(scope.row.reserveTime).getTime() < new Date().getTime() && scope.row.reserveState != 4 && scope.row.reserveState != 5 && scope.row.reserveState != 0">
+              已过期
+            </div>
+            <div v-else-if="scope.row.reserveState === 0">
               <el-button type="danger" size="mini" icon="el-icon-delete">已拒绝</el-button>
             </div>
             <div v-else-if="scope.row.reserveState === 1">
               <el-button :type= "el_tag_type[scope.row.reserveState]" size="mini" @click="update(scope.row.reserveId)">{{ reserve_state[scope.row.reserveState] }}</el-button>
               <el-button type="danger" size="mini" icon="el-icon-delete" @click="refuse(scope.row.reserveId)">拒绝</el-button>
             </div>
-            <div v-else-if="scope.row.reserveState !== 5">
+            <div v-else-if="scope.row.reserveState !== 4">
               <el-button :type= "el_tag_type[scope.row.reserveState]" size="mini" @click="update(scope.row.reserveId)">{{ reserve_state[scope.row.reserveState] }}</el-button>
             </div>
             <div v-else>
@@ -89,7 +92,7 @@ export default {
       total: 0,
       reserveQuery: {},
       el_tag_type: ['warning', 'success', 'success', 'success', 'success', 'primary'],
-      reserve_state: ['已拒绝', '待确认', '待授课', '上课中', '待评价', '已评价']
+      reserve_state: ['已拒绝', '待确认', '待授课', '上课中', '已完成', '已完成']
     }
   },
   created() { // 页面渲染之前执行，调用methods定义的方法
